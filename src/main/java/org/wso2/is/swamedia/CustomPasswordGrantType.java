@@ -44,10 +44,8 @@ public class CustomPasswordGrantType extends PasswordGrantHandler {
         String username = null;
         String password = null;
         // find out mobile number
-        log.info("find out mobile number");
+        log.info("find out username & password");
         for(RequestParameter parameter : parameters){
-        	log.info("parameter key" + parameter.getKey());
-        	log.info("parameter value" +parameter.getValue());
             if(USERNAME_GRANT_PARAM.equals(parameter.getKey())){
                 if(parameter.getValue() != null && parameter.getValue().length > 0){
                    username = parameter.getValue()[0];
