@@ -12,15 +12,17 @@ import org.wso2.carbon.identity.core.util.IdentityTenantUtil;
 import org.wso2.carbon.identity.oauth2.IdentityOAuth2Exception;
 import org.wso2.carbon.identity.oauth2.dto.OAuth2AccessTokenReqDTO;
 import org.wso2.carbon.identity.oauth2.internal.OAuth2ServiceComponentHolder;
+import org.wso2.carbon.identity.oauth2.model.RequestParameter;
 import org.wso2.carbon.identity.oauth2.token.OAuthTokenReqMessageContext;
 import org.wso2.carbon.identity.oauth2.token.handlers.grant.AbstractAuthorizationGrantHandler;
+import org.wso2.carbon.identity.oauth2.token.handlers.grant.PasswordGrantHandler;
 import org.wso2.carbon.identity.oauth2.util.OAuth2Util;
 import org.wso2.carbon.user.api.UserStoreException;
 import org.wso2.carbon.user.api.UserStoreManager;
 import org.wso2.carbon.user.core.util.UserCoreUtil;
 import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
 
-public class CustomPasswordGrantType extends AbstractAuthorizationGrantHandler {
+public class CustomPasswordGrantType extends PasswordGrantHandler {
 
 	private static Log log = LogFactory.getLog(CustomPasswordGrantType.class);
 	 public static final String USERNAME_GRANT_PARAM = "username";
@@ -30,15 +32,43 @@ public class CustomPasswordGrantType extends AbstractAuthorizationGrantHandler {
 	public boolean validateGrant(OAuthTokenReqMessageContext tokReqMsgCtx) throws IdentityOAuth2Exception {
 		log.info("call validateGrant from CustomPasswordGrantType class");
 
-		if (!super.validateGrant(tokReqMsgCtx)) {
+		AbstractAuthorizationGrantHandler abstractAuthorizationGrantHandler=new AbstractAuthorizationGrantHandler() {
+		};
+		if (!abstractAuthorizationGrantHandler.validateGrant(tokReqMsgCtx)) {
 			return false;
 		}
-
+		
+        // extract request parameters
+        RequestParameter[] parameters = tokReqMsgCtx.getOauth2AccessTokenReqDTO().getRequestParameters();
+        log.info("request parameter " + parameters);
+        String username = null;
+        String password = null;
+        // find out mobile number
+        log.info("find out mobile number");
+        for(RequestParameter parameter : parameters){
+        	log.info("parameter key" + parameter.getKey());
+        	log.info("parameter value" +parameter.getValue());
+            if(USERNAME_GRANT_PARAM.equals(parameter.getKey())){
+                if(parameter.getValue() != null && parameter.getValue().length > 0){
+                   username = parameter.getValue()[0];
+                }
+            }
+            if(PASSWORD_GRANT_PARAM.equals(parameter.getKey())){
+                if(parameter.getValue() != null && parameter.getValue().length > 0){
+                	password = parameter.getValue()[0];
+                }
+            }
+        }
+        log.info("username : "+username);
+        log.info("password : "+password);
 		OAuth2AccessTokenReqDTO oAuth2AccessTokenReqDTO = tokReqMsgCtx.getOauth2AccessTokenReqDTO();
-		String username = oAuth2AccessTokenReqDTO.getResourceOwnerUsername();
 		String userTenantDomain = MultitenantUtils.getTenantDomain(username);
 		String clientId = oAuth2AccessTokenReqDTO.getClientId();
 		String tenantDomain = oAuth2AccessTokenReqDTO.getTenantDomain();
+		
+		log.info("userTenantDomain : "+userTenantDomain);
+		log.info("clientId : "+clientId);
+		log.info("tenantDomain : "+tenantDomain);
 		ServiceProvider serviceProvider = null;
 		try {
 			log.info("getting data oauth2 service provider ------> ");
@@ -79,7 +109,7 @@ public class CustomPasswordGrantType extends AbstractAuthorizationGrantHandler {
 		try {
 			userStoreManager = CarbonContext.getThreadLocalCarbonContext().getUserRealm().getUserStoreManager();
 			authStatus = userStoreManager.authenticate(tenantAwareUserName,
-					oAuth2AccessTokenReqDTO.getResourceOwnerPassword());
+					password);
 
 			if (log.isDebugEnabled()) {
 				log.debug("Token request with Password Grant Type received. " + "Username : " + username + "Scope : "
