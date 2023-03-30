@@ -1,4 +1,4 @@
-## How to apply custom password grant type
+## How to apply custom password grant type to Identity Server version 5.7.0
 
 System Requirements
 =========================================
