@@ -29,6 +29,13 @@ mvn clean install -Dmaven.test.skip=true
 
 4. Restart the server.
 
+5. Configure the new OAuth grant type.
+    * Sign in to the WSO2 Identity Server. Enter your username and password to log on to the Management Console. 
+    * Fill in the Service Provider Name and provide a brief Description of the service provider. See Adding a Service Provider for more information.
+    * Expand the OAuth/OpenID Connect Configuration and click Configure.
+    * Enter a callback URL. For example, http://localhost:8080/playground2/oauth2client. 
+    * Click Add.
+    * The OAuth Client Key and OAuth Client Secret will now be visible.
 
 5. Send the grant request to the /token API using a cURL command.
       * Replace clientid:clientsecret with the OAuth Client Key and OAuth Client Secret respectively and run the following sample cURL command in a new terminal window.
