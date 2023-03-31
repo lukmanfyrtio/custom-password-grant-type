@@ -30,8 +30,8 @@ mvn clean install -Dmaven.test.skip=true
 4. Restart the server.
 
 5. Configure the new OAuth grant type.
-    * Sign in to the WSO2 Identity Server. Enter your username and password to log on to the Management Console. 
-    * Fill in the Service Provider Name and provide a brief Description of the service provider. See Adding a Service Provider for more information.
+    * Sign in to the WSO2 Identity Server. Enter your username and password to log on to the [Management Console](https://docs.wso2.com/display/IS500/Getting+Started+with+the+Management+Console).
+    * Fill in the Service Provider Name and provide a brief Description of the service provider. See [Adding a Service Provider](https://docs.wso2.com/display/IS500/Adding+a+Service+Provider) for more information.
     * Expand the OAuth/OpenID Connect Configuration and click Configure.
     * Enter a callback URL. For example, http://localhost:8080/playground2/oauth2client. 
     * Click Add.
@@ -41,5 +41,6 @@ mvn clean install -Dmaven.test.skip=true
       * Replace clientid:clientsecret with the OAuth Client Key and OAuth Client Secret respectively and run the following sample cURL command in a new terminal window.
   
 ```shell
-curl --user clientid:clientsecret -k -d "grant_type=password&username=admin&password=admin" -H "Content-Type: application/x-www-form-urlencoded" https://localhost:9443/oauth2/token
+curl --user clientid:clientsecret -k -d "grant_type=password&username=admin&password=admin" 
+  -H "Content-Type: application/x-www-form-urlencoded" https://localhost:9443/oauth2/token
 ```
